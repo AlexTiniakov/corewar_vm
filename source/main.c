@@ -6,11 +6,12 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/06 13:15:13 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/13 20:03:59 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/19 13:22:21 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../corewar.h"
+# include <stdio.h>
 
 static int		reader(int ac, char *av[], t_header players[MAX_PLAYERS])
 {
@@ -59,16 +60,12 @@ static void		put_players(unsigned int pl_num, t_header players[MAX_PLAYERS],
 	unsigned int	i;
 	unsigned int	j;
 
-	i = 0;
-	while (i < pl_num)
+	i = -1;
+	while (++i < pl_num)
 	{
-		j = 0;
-		while (j < players[i].prog_size)
-		{
+		j = -1;
+		while (++j < players[i].prog_size)
 			map[j + players[i].start] = players[i].program[j];
-			j++;
-		}
-		i++;
 	}
 }
 
@@ -76,27 +73,24 @@ int				main(int ac, char *av[])
 {
 	unsigned char	map[MEM_SIZE];
 	t_header		players[MAX_PLAYERS];
-	t_fork			forks[MAX_PLAYERS];
+	t_fork			*forks;
 	unsigned int	pl_num;
 	unsigned int	i;
 
+	forks = NULL;
 	if (ac == 1)
 		return (1);
 	pl_num = reader(ac, av, players);
 	count_start(pl_num, players);
 	init_map(map);
-	i = -1;
-	while (++i < pl_num)
-		init_fork(&forks[i], players[i].id, players[i].start);
 	put_players(pl_num, players, map);
 	print_map(map);
+
 	i = -1;
 	while (++i < pl_num)
-	{
-		forks[i].optcode = map[forks[i].curr_point];
-		ft_printf("fork %d, parent %d, sp = %d, code = %d\n", i, forks[i].parent_id,
-				forks[i].curr_point, forks[i].optcode);
-	}
+		init_fork(&forks, players[i].id, players[i].start, map[players[i].start]);
+
+	cycles(map, forks, players);
 //	system("leaks corewar");
 	return (0);
 }

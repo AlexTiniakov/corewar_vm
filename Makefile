@@ -6,15 +6,17 @@
 #    By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/07/07 14:30:48 by dskrypny          #+#    #+#              #
-#    Updated: 2018/09/13 19:54:07 by dskrypny         ###   ########.fr        #
+#    Updated: 2018/09/19 12:10:39 by dskrypny         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = corewar
 
-SOURCE = forks.c \
+SOURCE = cycles.c \
+		 forks.c \
 		 main.c \
 		 map.c \
+		 operations.c \
 		 players.c \
 		 asm_op.c
 

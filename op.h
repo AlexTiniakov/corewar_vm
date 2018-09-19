@@ -6,7 +6,7 @@
 /*   By: rkoval <rkoval@student.unit.ua>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/10/04 11:33:27 by zaz               #+#    #+#             */
-/*   Updated: 2018/09/13 20:03:54 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/19 12:09:12 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,16 +84,19 @@ typedef struct					s_op
 	unsigned char				label_size;
 }								t_op;
 
-typedef struct					s_fork
+typedef struct s_fork			t_fork;
+
+struct							s_fork
 {
 	char						alive;
 	char						carry;
-	char						optcode;
+	char						opcode;
 	char						parent_id;
 	unsigned int				curr_point;
 	unsigned int				cycles_to_wait;
-	unsigned int				registr[16];
-}								t_fork;
+	unsigned int				registr[REG_NUMBER];
+	t_fork						*next;
+};
 
 extern t_op						g_op_tab[17];
 
