@@ -6,7 +6,7 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/11 17:03:21 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/19 12:20:13 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/20 15:44:22 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void		init_players(t_header players[MAX_PLAYERS])
 	while (++i < MAX_PLAYERS)
 	{
 		players[i].magic = 0;
+		players[i].id = 0;
 		players[i].prog_size = 0;
 		j = -1;
 		while (++j <= PROG_NAME_LENGTH + 1)
@@ -89,17 +90,24 @@ static void	read_code(int fd, t_header *player)
 		player->program[i] = buf[0];
 		i++;
 	}
+	player->alive = 0;
 }
 
-int			read_player(int fd, t_header *player)
+int			read_player(int fd, t_header *player, int curr_pl)
 {
-	unsigned int magic;
+	unsigned int	magic;
+	int				i;
 
 	if ((magic = read_int(fd, 4)) != COREWAR_EXEC_MAGIC)
 		return (1);
 	else
 		player->magic = magic;
+	i = -1;
+	while (++i < REG_NUMBER)
+		player->registr[i] = 0;
 	read_info(fd, player);
 	read_code(fd, player);
+	player->id = 0xFFFFFFFF - curr_pl;
+	player->registr[0] = player->id;
 	return (0);
 }

@@ -6,12 +6,11 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/06 13:15:13 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/19 13:22:21 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/20 16:13:19 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../corewar.h"
-# include <stdio.h>
 
 static int		reader(int ac, char *av[], t_header players[MAX_PLAYERS])
 {
@@ -26,13 +25,10 @@ static int		reader(int ac, char *av[], t_header players[MAX_PLAYERS])
 	{
 		if ((fd = open(av[i], O_RDONLY)) < 0)
 			continue ;
-		if (read_player(fd, &(players[curr_pl])))
+		if (read_player(fd, &(players[curr_pl]), curr_pl))
 			exit(1);
 		else
-		{
-			players[curr_pl].id = curr_pl;
 			curr_pl++;
-		}
 		close(fd);
 	}
 	return (curr_pl);
@@ -85,12 +81,23 @@ int				main(int ac, char *av[])
 	init_map(map);
 	put_players(pl_num, players, map);
 	print_map(map);
-
 	i = -1;
 	while (++i < pl_num)
 		init_fork(&forks, players[i].id, players[i].start, map[players[i].start]);
-
-	cycles(map, forks, players);
-//	system("leaks corewar");
+//
+	int j = -1;
+	while (++j < MAX_PLAYERS && players[j].magic)
+		ft_printf("name |%s| id |%x| live %d\n", players[j].prog_name,
+				players[j].id, players[j].alive);
+//
+	i = -1;
+	while (++i < 12)
+		cycle(map, forks, players);
+//
+	j = -1;
+	while (++j < MAX_PLAYERS && players[j].magic)
+		ft_printf("name |%s| id |%x| live %d\n", players[j].prog_name,
+				players[j].id, players[j].alive);
+//
 	return (0);
 }

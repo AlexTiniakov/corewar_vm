@@ -6,7 +6,7 @@
 /*   By: rkoval <rkoval@student.unit.ua>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2013/10/04 11:33:27 by zaz               #+#    #+#             */
-/*   Updated: 2018/09/19 12:09:12 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/20 16:00:39 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,14 @@ typedef char					t_arg_type;
 typedef struct					s_header
 {
 	unsigned int		id;
+	unsigned int		alive;
 	unsigned int		magic;
 	unsigned int		prog_size;
 	unsigned int		start;
 	char				prog_name[PROG_NAME_LENGTH + 1];
 	char				comment[COMMENT_LENGTH + 1];
 	unsigned char		program[CHAMP_MAX_SIZE];
+	unsigned int		registr[REG_NUMBER];
 }								t_header;
 
 /*
@@ -71,6 +73,19 @@ typedef struct					s_header
 ** opcode - 0x01 - 0X10 || binary from table
 ** label_size - 0 == 4,  1 == 2
 */
+
+typedef struct s_fork			t_fork;
+
+struct							s_fork
+{
+	char						alive;
+	char						carry;
+	char						opcode;
+	unsigned int				parent_id;
+	unsigned int				curr_point;
+	unsigned int				cycles_to_wait;
+	t_fork						*next;
+};
 
 typedef struct					s_op
 {
@@ -82,21 +97,9 @@ typedef struct					s_op
 	char						*desc;
 	unsigned char				octal;
 	unsigned char				label_size;
+	void						(*operation)(unsigned char[MEM_SIZE],
+			t_fork **, t_header[MAX_PLAYERS]);
 }								t_op;
-
-typedef struct s_fork			t_fork;
-
-struct							s_fork
-{
-	char						alive;
-	char						carry;
-	char						opcode;
-	char						parent_id;
-	unsigned int				curr_point;
-	unsigned int				cycles_to_wait;
-	unsigned int				registr[REG_NUMBER];
-	t_fork						*next;
-};
 
 extern t_op						g_op_tab[17];
 
