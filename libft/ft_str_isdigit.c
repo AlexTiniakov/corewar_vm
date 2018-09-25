@@ -1,35 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_itoa_base.c                                     :+:      :+:    :+:   */
+/*   ft_str_isdigit.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/04/15 11:04:07 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/21 18:23:42 by dskrypny         ###   ########.fr       */
+/*   Created: 2018/09/20 19:15:03 by dskrypny          #+#    #+#             */
+/*   Updated: 2018/09/20 19:16:40 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	make_printf(size_t value, size_t base, char *str, int *i)
+int		ft_str_isdigit(char *str)
 {
-	char	*tmp;
+	int i;
 
-	tmp = "0123456789abcdef";
-	if (value >= base)
-		make_printf(value / base, base, str, i);
-	str[(*i)++] = tmp[ABS(value % base)];
-}
-
-char	*ft_itoa_base_printf(size_t value, size_t base)
-{
-	int		i;
-	char	*str;
-
-	i = 0;
-	str = (char *)malloc(32);
-	make_printf(value, base, str, &i);
-	str[i] = '\0';
-	return (str);
+	i = -1;
+	while (str[++i])
+		if (!ft_isdigit(str[i]))
+			return (0);
+	return (1);
 }

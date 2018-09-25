@@ -6,7 +6,7 @@
 #    By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/19 15:39:00 by dskrypny          #+#    #+#              #
-#    Updated: 2018/08/18 17:32:09 by dskrypny         ###   ########.fr        #
+#    Updated: 2018/09/21 11:24:29 by dskrypny         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -84,6 +84,7 @@ SOURCE = ft_atoi.c \
 			ft_strtrim.c \
 			ft_tolower.c \
 			ft_toupper.c \
+			ft_str_isdigit.c \
 			$(PRINTF_DIR)/ft_parser.c \
 			$(PRINTF_DIR)/ft_print_chr.c \
 			$(PRINTF_DIR)/ft_print_hex.c \
@@ -116,6 +117,13 @@ $(NAME): $(OBJ)
 	@ranlib $(NAME)
 	@echo "lib created"
 
+$(OBJ): | $(OBJ_DIR)
+
+$(OBJ_DIR):
+	@mkdir $(OBJ_DIR)
+	@mkdir $(OBJ_DIR)/ft_printf
+
+
 $(OBJ_DIR)%.o: %.c
 	@gcc $(FLAGS) -c -o $@ $<
 
@@ -124,6 +132,7 @@ clean:
 	 @echo "objects deleted"
 
 fclean: clean
+	@rm -rf $(OBJ_DIR)
 	@rm -rf $(NAME)
 	@echo "libft file deleted"
 

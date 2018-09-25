@@ -6,98 +6,144 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/06 13:15:13 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/20 16:13:19 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/24 21:49:58 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../corewar.h"
 
-static int		reader(int ac, char *av[], t_header players[MAX_PLAYERS])
+int				check_flags(t_core *core)
 {
-	int				i;
-	int				fd;
-	int				curr_pl;
-
-	i = 0;
-	curr_pl = 0;
-	init_players(players);
-	while (++i < ac)
+	if (!ft_strcmp(core->av[core->index], "-dump"))
 	{
-		if ((fd = open(av[i], O_RDONLY)) < 0)
-			continue ;
-		if (read_player(fd, &(players[curr_pl]), curr_pl))
-			exit(1);
+		if (core->index < core->ac - 1 && ft_str_isdigit(core->av[core->index])
+				&& (core->dump = ft_atoi(core->av[core->index + 1])) > 0)
+			return (2);
 		else
-			curr_pl++;
-		close(fd);
+			exit(usage());
 	}
-	return (curr_pl);
+	if (!ft_strcmp(core->av[core->index], "-l"))
+		return (ABS(core->leaks = 1));
+	if (!ft_strcmp(core->av[core->index], "-n"))
+	{
+		if (core->index < core->ac - 1 && (core->dump =
+					ft_atoi(core->av[core->index + 1])) > 0)
+			return (2);
+		else
+			exit(usage());
+	}
+	if (!ft_strcmp(core->av[core->index], "-v"))
+		return (ABS(core->visual = 1));
+	return (0);
 }
 
-static void		count_start(int pl_num, t_header players[MAX_PLAYERS])
+static void		count_start(t_core *core)
 {
 	int				i;
 	int				delta;
 	int				point;
 
 	i = -1;
-	delta = MEM_SIZE / pl_num;
+	delta = MEM_SIZE / core->pl_num;
 	point = 0;
-	while (++i < pl_num)
+	while (++i < core->pl_num)
 	{
-		players[i].start = point;
+		core->players[i].start = point;
 		point += delta;
 	}
 }
 
-static void		put_players(unsigned int pl_num, t_header players[MAX_PLAYERS],
-		unsigned char map[MEM_SIZE])
+static int		reader(t_core *core)
 {
-	unsigned int	i;
+	int				fd;
+
+	while (++core->index < core->ac)
+	{
+		if ((core->index += check_flags(core)) >= core->ac)
+            break ;
+		if ((fd = open(core->av[core->index], O_RDWR)) < 0)
+			error("error: Invalid file");
+		if (read_player(fd, &(core->players[core->pl_num]), core->pl_num))
+			error("error: Invalid player");
+		else
+			core->pl_num++;
+		close(fd);
+	}
+	if (!(core->pl_num))
+		error("error: No players");
+	if (core->pl_num > MAX_PLAYERS)
+		error("error: Too many players");
+	count_start(core);
+	return (0);
+}
+
+static void		put_players(t_core *core)
+{
+	int	i;
 	unsigned int	j;
 
 	i = -1;
-	while (++i < pl_num)
+	while (++i < core->pl_num)
 	{
 		j = -1;
-		while (++j < players[i].prog_size)
-			map[j + players[i].start] = players[i].program[j];
+		while (++j < core->players[i].prog_size)
+		{
+			core->map[j + core->players[i].start] = core->players[i].program[j];
+			core->map_col[j + core->players[i].start] = ft_check_curr(core, core->players[i].id, 1);
+		}
 	}
 }
 
+//delete this func
+void			print_forks(t_fork *forks)
+{
+	t_fork *temp;
+	int i;
+
+	temp = forks;
+	while (temp)
+	{
+		ft_printf("id %x %d carry %d|", temp->parent_id, temp->alive, temp->carry);
+		i = 0;
+		while (++i <= REG_NUMBER)
+			ft_printf("%08x|", temp->registr[i]);
+		ft_printf("%d %d %d|\n", temp->curr_point, temp->opcode,
+				temp->cycles_to_wait);
+		temp = temp->next;
+	}
+	ft_printf("///////////////\n");
+}
+
+
+
 int				main(int ac, char *av[])
 {
-	unsigned char	map[MEM_SIZE];
-	t_header		players[MAX_PLAYERS];
-	t_fork			*forks;
-	unsigned int	pl_num;
-	unsigned int	i;
+	t_core			core;	
+	int				i;
 
-	forks = NULL;
 	if (ac == 1)
-		return (1);
-	pl_num = reader(ac, av, players);
-	count_start(pl_num, players);
-	init_map(map);
-	put_players(pl_num, players, map);
-	print_map(map);
+		exit(usage());
+	reader(init_core(&core, ac, av));
+	///
+	ft_put_white(&core);
+	///
+	put_players(&core);
+	//print_map(core.map);
 	i = -1;
-	while (++i < pl_num)
-		init_fork(&forks, players[i].id, players[i].start, map[players[i].start]);
-//
-	int j = -1;
-	while (++j < MAX_PLAYERS && players[j].magic)
-		ft_printf("name |%s| id |%x| live %d\n", players[j].prog_name,
-				players[j].id, players[j].alive);
-//
-	i = -1;
-	while (++i < 12)
-		cycle(map, forks, players);
-//
-	j = -1;
-	while (++j < MAX_PLAYERS && players[j].magic)
-		ft_printf("name |%s| id |%x| live %d\n", players[j].prog_name,
-				players[j].id, players[j].alive);
-//
+	while (++i < core.pl_num)
+		init_fork(&(core.forks), core.players[i].id,
+				core.players[i].start, core.map[core.players[i].start]);
+	print_forks(core.forks);
+	i = 0;
+	///
+	core.visual ? ft_visual(&core) : ft_cycle(&core);
+	///
+	/*while (++i <= 27)
+		cycle(&core);*/
+	print_forks(core.forks);
+	//print_map(core.map);
+//	LEAK
+
+	print_forks(core.forks);
 	return (0);
 }

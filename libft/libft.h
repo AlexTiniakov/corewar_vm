@@ -6,7 +6,7 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/31 11:11:20 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/08/22 12:44:53 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/20 19:28:14 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void			ft_putnstr(char const *s, size_t length);
 void			ft_strcapit(char *s);
 unsigned int	ft_options(char *s);
 size_t			ft_count_int(int c);
+int				ft_str_isdigit(char *str);
 
 char			*ft_itoa_uns(unsigned long int n);
 

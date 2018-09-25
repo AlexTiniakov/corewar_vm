@@ -1,35 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_itoa_base.c                                     :+:      :+:    :+:   */
+/*   operations.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/04/15 11:04:07 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/21 18:23:42 by dskrypny         ###   ########.fr       */
+/*   Created: 2018/09/19 12:08:17 by dskrypny          #+#    #+#             */
+/*   Updated: 2018/09/24 22:16:24 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../corewar.h"
 
-void	make_printf(size_t value, size_t base, char *str, int *i)
+/*
+**  OKOKOKOKOKOKOKO copy_fork protected too
+**  creates copy of curr fork and moves it to (PC + T_DIR) points
+**  tested, ok
+*/
+
+void	long_forking(t_core *core, t_fork **fork)
 {
-	char	*tmp;
+	unsigned int sp;
 
-	tmp = "0123456789abcdef";
-	if (value >= base)
-		make_printf(value / base, base, str, i);
-	str[(*i)++] = tmp[ABS(value % base)];
-}
-
-char	*ft_itoa_base_printf(size_t value, size_t base)
-{
-	int		i;
-	char	*str;
-
-	i = 0;
-	str = (char *)malloc(32);
-	make_printf(value, base, str, &i);
-	str[i] = '\0';
-	return (str);
+	sp = find_num(core->map, (*fork)->curr_point + 1, 2);
+	copy_fork(*fork, &(core->forks), (int)sp);
+	make_shift(fork, 3, 0);
 }

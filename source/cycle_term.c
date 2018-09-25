@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   cycle_term.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: otiniako <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/18 20:00:20 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/19 11:41:32 by dskrypny         ###   ########.fr       */
+/*   Created: 2018/09/25 14:52:25 by otiniako          #+#    #+#             */
+/*   Updated: 2018/09/25 14:52:26 by otiniako         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../corewar.h"
 
-void	ft_lstadd(t_list **alst, t_list *new)
-{
-	if (alst == NULL || new == NULL)
-		return ;
-	new->next = *alst;
-	*alst = new;
+int     ft_cycle(t_core *core)
+{    
+    /*while (++i <= 27)
+		cycle(&core);*/
+	while (cycle(core))
+		core->cycles_num++;
+    return (0);
 }

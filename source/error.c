@@ -1,35 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_itoa_base.c                                     :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/04/15 11:04:07 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/21 18:23:42 by dskrypny         ###   ########.fr       */
+/*   Created: 2018/09/20 19:00:31 by dskrypny          #+#    #+#             */
+/*   Updated: 2018/09/23 14:25:38 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../corewar.h"
 
-void	make_printf(size_t value, size_t base, char *str, int *i)
+int			usage(void)
 {
-	char	*tmp;
-
-	tmp = "0123456789abcdef";
-	if (value >= base)
-		make_printf(value / base, base, str, i);
-	str[(*i)++] = tmp[ABS(value % base)];
+	return (ft_printf("%s %s", "usage: ./corewar [-dump nbr_cycles]",
+				"[[-n number] champion1.cor] ...\n"));
 }
 
-char	*ft_itoa_base_printf(size_t value, size_t base)
+int			error(char *answer)
 {
-	int		i;
-	char	*str;
-
-	i = 0;
-	str = (char *)malloc(32);
-	make_printf(value, base, str, &i);
-	str[i] = '\0';
-	return (str);
+	exit(ft_printf("%{red}s\n", answer));
+	return (0);
 }

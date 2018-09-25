@@ -6,7 +6,7 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/11 17:03:21 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/20 15:44:22 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/23 17:45:19 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,10 @@ void		init_players(t_header players[MAX_PLAYERS])
 	}
 }
 
+/*
+** reading {size} bytes from {fd} and turn them into a integer
+*/
+
 static int	read_int(int fd, int size)
 {
 	unsigned char		buff[4];
@@ -55,6 +59,10 @@ static int	read_int(int fd, int size)
 	}
 	return (x);
 }
+
+/*
+** reading name and comment
+*/
 
 static void	read_info(int fd, t_header *player)
 {
@@ -78,6 +86,10 @@ static void	read_info(int fd, t_header *player)
 	read(fd, buf, 4);
 }
 
+/*
+** reading body of the player
+*/
+
 static void	read_code(int fd, t_header *player)
 {
 	unsigned int	i;
@@ -96,18 +108,13 @@ static void	read_code(int fd, t_header *player)
 int			read_player(int fd, t_header *player, int curr_pl)
 {
 	unsigned int	magic;
-	int				i;
 
 	if ((magic = read_int(fd, 4)) != COREWAR_EXEC_MAGIC)
 		return (1);
 	else
 		player->magic = magic;
-	i = -1;
-	while (++i < REG_NUMBER)
-		player->registr[i] = 0;
 	read_info(fd, player);
 	read_code(fd, player);
 	player->id = 0xFFFFFFFF - curr_pl;
-	player->registr[0] = player->id;
 	return (0);
 }

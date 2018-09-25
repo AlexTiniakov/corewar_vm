@@ -1,3 +1,5 @@
-.DStore
 *.swp
 *.o
+*.DS_Store
+corewar
+libft.a

@@ -6,13 +6,11 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/15 11:04:07 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/06/10 14:36:37 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/21 18:27:49 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 void	make(long long int value, long long int base, char *str, int *i)
 {

@@ -6,35 +6,65 @@
 /*   By: dskrypny <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/09/14 19:24:24 by dskrypny          #+#    #+#             */
-/*   Updated: 2018/09/20 16:25:55 by dskrypny         ###   ########.fr       */
+/*   Updated: 2018/09/24 23:00:36 by dskrypny         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../corewar.h"
 
-void		cycle(unsigned char map[MEM_SIZE], t_fork *forks,
-		t_header players[MAX_PLAYERS])
+/*
+**	if ((pl_index = find_player(core->players, temp->parent_id)) == -1)
+**	{
+**		temp->curr_point += 1;
+**		temp->opcode = core->map[temp->curr_point];
+**		continue;
+**	}
+*/
+
+static void		make_operation(t_core *core, t_fork *temp)
+{
+	temp->opcode = core->map[(temp->curr_point + MEM_SIZE) % MEM_SIZE];
+	if (temp->opcode > 0 && temp->opcode < 17)
+		temp->cycles_to_wait = (temp->cycles_to_wait) ?
+			temp->cycles_to_wait - 1 : g_op_tab[temp->opcode].cycles;
+	else
+	{
+		temp->curr_point = (temp->curr_point + 1 + MEM_SIZE) % MEM_SIZE;
+		temp->opcode = core->map[temp->curr_point];
+		return ;
+	}
+	if (!(temp->cycles_to_wait))
+	{
+		g_op_tab[temp->opcode].operation(core, &temp);
+		core->proc = 1;
+	}
+}
+
+int				cycle(t_core *core)
 {
 	t_fork			*temp;
-	int				oper_index;
-	int				pl_index;
+	t_fork			*temp1;
 
-	temp = forks;
+	while (core->forks && !(core->forks->alive))
+	{
+		temp = core->forks->next;
+		free(core->forks);
+		core->forks = temp;
+	}
+	if (!core->forks)
+		return (0);
+	temp = core->forks;
 	while (temp)
 	{
-		if ((pl_index = find_player(players, temp->parent_id)) == -1)
-			exit(1);
-		if ((oper_index = find_operation(temp->opcode)) > -1)
-			temp->cycles_to_wait = (temp->cycles_to_wait) ?
-				temp->cycles_to_wait - 1 : g_op_tab[oper_index].cycles;
-		else
-			ft_printf("%{red}s\n", "Wrong opcode!!!");
-		if (!(temp->cycles_to_wait))
-			g_op_tab[oper_index].operation(map, &temp, players);
-	//	ft_printf("%d %d %s %d\n", temp->curr_point, temp->opcode,
-	//			g_op_tab[find_operation(temp->opcode)].desc, temp->cycles_to_wait);
+		if (!temp->alive)
+		{
+			temp1 = temp->next;
+			free(temp);
+			temp = temp1;
+			continue;
+		}
+		make_operation(core, temp);
 		temp = temp->next;
 	}
-//	ft_printf("___________\n");
-	//output
+	return (1);
 }
